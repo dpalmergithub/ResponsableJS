@@ -2,13 +2,16 @@ function Responsable() {
 
     var self = this;
 
-    this.stack = function (selector, maxWidth) {
+    this.stack = function (config) {
+        var selector = String(config.selector);
+        var maxWidth = String(config.maxWidth);
+        var cClass = String(config.class);
         var tables = document.querySelectorAll(selector);
 
         var i = 0;
         while (i < tables.length) {
             var newDiv = document.createElement('div');
-            newDiv.classList.add("responsable-container");
+            newDiv.classList.add("responsable-container", cClass);
             tables[i].parentNode.insertBefore(newDiv, tables[i].nextSibling);
             tables[i].classList.add("responsable-table-original");
             i += 1;
@@ -16,7 +19,7 @@ function Responsable() {
         i = 0;
         var html = "";
         var mqls = [
-            window.matchMedia("(max-width:" + String(maxWidth) + "px)"),
+            window.matchMedia("(max-width:" + maxWidth + "px)"),
         ]
         var initQ = mqh();
         for (var i = 0; i < mqls.length; i++) {
@@ -59,7 +62,7 @@ function Responsable() {
                 html += "<hr/>";
                 j = 0;
             }
-            html += "<p class='responsable-header'><strong>" + th[j].innerText + "</strong>:<span>" + content + "</span></p>";
+            html += "<div class='responsable-card'><strong>" + th[j].innerText + "</strong>:<span>" + content + "</span></div>";
             i += 1;
             j += 1;
         }
@@ -73,4 +76,8 @@ function Responsable() {
 }
 
 var util = new Responsable();
-util.stack("table", 420);
+util.stack({
+    selector: "table",
+    maxWidth: 768,
+    class: "my-class"
+});
