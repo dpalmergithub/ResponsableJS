@@ -30,7 +30,7 @@ function Responsable() {
             var i = 0;
             if (mqls[0].matches) {
                 while (i < tables.length) {
-                    html = self._stackFormat(tables[i], config.firstRow);
+                    html = self._stackFormat(tables[i], config);
                     tables[i].style.display = "none";
                     tables[i].nextSibling.innerHTML = html;
                     i += 1;
@@ -46,15 +46,18 @@ function Responsable() {
         }
     };
 
-    self._stackFormat = function (table, firstRow) {
+    self._stackFormat = function (table, config) {
         var html = "";
-        var initPosition = Number(firstRow) - 1;
+        var initPosition = Number(config.firstRow) - 1;
         var tr = table.querySelectorAll("tr") || [];
         var tdsPerRow = tr[initPosition].querySelectorAll("td") || [];
         var th = table.querySelectorAll("th") || [];
         var td = table.querySelectorAll("td") || [];
         var thDiff = 0;
         var len = td.length;
+        if (!config.columnSeparator) {
+            config.columnSeparator = ":";
+        }
 
         if (tdsPerRow.length < th.length) {
             thDiff = (th.length - tdsPerRow.length);
@@ -79,9 +82,12 @@ function Responsable() {
                 j = 0;
             }
             tdVal = td[i].innerText;
+            if (config.allowHTML) {
+                tdVal = td[i].innerHTML;
+            }
             thVal = th[j].innerText;
 
-            html += "<div class='responsable-container-child'><span class='responsable-tcolumn'><strong>" + thVal + "</strong></span>:<span class='responsable-tval'>" + tdVal + "</span></div>";
+            html += "<div class='responsable-container-child'><span class='responsable-tcolumn'><strong>" + thVal + "</strong></span><span class='responable-colseparator'>" + String(config.columnSeparator) + "</span><span class='responsable-tval'>" + tdVal + "</span></div>";
             i += 1;
             j += 1;
         }
@@ -99,5 +105,7 @@ util.stack({
     selector: "table",
     maxWidth: 768,
     class: "my-class",
-    firstRow: 2
+    firstRow: 2,
+    columnSeparator: "-",
+    allowHTML: true
 });
