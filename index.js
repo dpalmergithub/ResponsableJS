@@ -2,7 +2,7 @@ function Responsable() {
 
     var self = this;
 
-    this.stack = function (config) {
+    self.stack = function (config) {
         var selector = String(config.selector);
         var maxWidth = String(config.maxWidth);
         var cClass = String(config.class);
@@ -30,7 +30,7 @@ function Responsable() {
             var i = 0;
             if (mqls[0].matches) {
                 while (i < tables.length) {
-                    html = self._stackFormat(tables[i]);
+                    html = self._stackFormat(tables[i], config.firstRow);
                     tables[i].style.display = "none";
                     tables[i].nextSibling.innerHTML = html;
                     i += 1;
@@ -46,23 +46,42 @@ function Responsable() {
         }
     };
 
-    this._stackFormat = function (table) {
+    self._stackFormat = function (table, firstRow) {
         var html = "";
-        var tr = table.querySelectorAll("tr");
-        var th = table.querySelectorAll("th");
-        var td = table.querySelectorAll("td");
+        var initPosition = Number(firstRow) - 1;
+        var tr = table.querySelectorAll("tr") || [];
+        var tdsPerRow = tr[initPosition].querySelectorAll("td") || [];
+        var th = table.querySelectorAll("th") || [];
+        var td = table.querySelectorAll("td") || [];
+        var thDiff = 0;
+        var len = td.length;
 
+        if (tdsPerRow.length < th.length) {
+            thDiff = (th.length - tdsPerRow.length);
+            var i = initPosition;
+            while (i < tr.length) {
+                for (var j = 0; j < thDiff; j += 1) {
+                    var newTD = document.createElement('td');
+                    tr[i].appendChild(newTD)
+                }
+                i += 1;
+            }
+            td = table.querySelectorAll("td") || [];
+            len = td.length;
+        }
         var i = 0;
         var j = 0;
-        while (i < td.length) {
-            var content;
-            content = td[i].innerText;
-
+        while (i < len) {
+            var thVal;
+            var tdVal;
             if (j == th.length) {
                 html += "<hr/>";
                 j = 0;
             }
-            html += "<div class='responsable-card'><strong>" + th[j].innerText + "</strong>:<span>" + content + "</span></div>";
+            tdVal = td[i].innerText;
+            thVal = th[j].innerText;
+
+            html += "<div class='responsable-card'><strong>" + thVal + "</strong>:<span>" + tdVal + "</span></div>";
             i += 1;
             j += 1;
         }
@@ -71,7 +90,7 @@ function Responsable() {
     };
 
     return {
-        stack: this.stack
+        stack: self.stack
     };
 }
 
@@ -79,5 +98,6 @@ var util = new Responsable();
 util.stack({
     selector: "table",
     maxWidth: 768,
-    class: "my-class"
+    class: "my-class",
+    firstRow: 2
 });
