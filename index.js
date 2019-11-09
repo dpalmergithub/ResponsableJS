@@ -81,7 +81,7 @@ function Responsable() {
             tdVal = td[i].innerText;
             thVal = th[j].innerText;
 
-            html += "<div class='responsable-card'><strong>" + thVal + "</strong>:<span>" + tdVal + "</span></div>";
+            html += "<div class='responsable-container-child'><span class='responsable-tcolumn'><strong>" + thVal + "</strong></span>:<span class='responsable-tval'>" + tdVal + "</span></div>";
             i += 1;
             j += 1;
         }
